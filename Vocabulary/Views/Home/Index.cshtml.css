@@ -1,0 +1,18 @@
+﻿body {
+
+}
+.media-block {
+    word-wrap: break-word;
+}
+.media-block__content {
+    margin-top: 12px;
+}
+.thumb {
+    text-align: center;
+    font-size: 0;
+}
+.thumb16_9 {
+    height: 0;
+    padding-bottom: 56.25%;
+    overflow: hidden;
+}

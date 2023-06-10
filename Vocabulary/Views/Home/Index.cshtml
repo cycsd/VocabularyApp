@@ -1,10 +1,21 @@
-﻿@model ServiceLayer.SearchService.ContentDto
+﻿@model List< ServiceLayer.SearchService.ArticleDto>
 @{
     ViewData["Title"] = "Home Page";
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-    <p>@Model.Name</p>
+
+    @foreach (var article in Model)
+    {
+
+        <div class="thumb thumb16_9">
+            <img src="@article.ImageUri.AbsoluteUri">
+            <span>@article.PublishDate</span>
+        </div>
+
+        <div>
+            <a asp-area="" asp-controller="Article" asp-action="Read" asp-route-articleUri="@article.Uri.AbsoluteUri"><h4>@article.Title</h4></a>
+        </div>
+    }
+
 </div>

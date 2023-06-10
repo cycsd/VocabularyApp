@@ -17,9 +17,9 @@ namespace Vocabulary.Controllers
 
         public IActionResult Index()
         {
-            var contServ = new ContentService();
-            var title = contServ.GetRss();
-            return View(new ContentDto { Name = title});
+            var contServ = new ArticleService();
+            var artielcs = contServ.GetArticles().ToList();
+            return View(artielcs);
         }
 
         public IActionResult Privacy()
