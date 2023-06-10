@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vocabulary", "Vocabulary.csproj", "{5F57412F-A5F9-406F-8914-EE01CFD1B03E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceLayer", "..\ServiceLayer\ServiceLayer.csproj", "{FEE370FD-483A-4871-84C2-C3791E3A244B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5F57412F-A5F9-406F-8914-EE01CFD1B03E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F57412F-A5F9-406F-8914-EE01CFD1B03E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F57412F-A5F9-406F-8914-EE01CFD1B03E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F57412F-A5F9-406F-8914-EE01CFD1B03E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FEE370FD-483A-4871-84C2-C3791E3A244B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEE370FD-483A-4871-84C2-C3791E3A244B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEE370FD-483A-4871-84C2-C3791E3A244B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEE370FD-483A-4871-84C2-C3791E3A244B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2BE0783E-AC9A-4EA1-9CE2-A2F57DA91B4B}
+	EndGlobalSection
+EndGlobal
