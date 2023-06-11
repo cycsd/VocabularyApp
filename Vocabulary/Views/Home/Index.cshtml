@@ -8,14 +8,25 @@
     @foreach (var article in Model)
     {
 
-        <div class="thumb thumb16_9">
-            <img src="@article.ImageUri.AbsoluteUri">
-            <span>@article.PublishDate</span>
+        <div class="card mb-3">
+            <div class="row no-gutters">
+                <div class="col-md-4">
+                    <img src="@article.ImageUri.AbsoluteUri" class="card-img">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <a asp-area="" asp-controller="Article" asp-action="Read" asp-route-articleUri="@article.Uri.AbsoluteUri">
+                            <h5 class="card-title">@article.Title</h5>
+                        </a>
+                        <p class="card-text"><small class="text-muted">@article.PublishDate</small></p>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div>
-            <a asp-area="" asp-controller="Article" asp-action="Read" asp-route-articleUri="@article.Uri.AbsoluteUri"><h4>@article.Title</h4></a>
-        </div>
+        @*        <div>
+    <a asp-area="" asp-controller="Article" asp-action="Read" asp-route-articleUri="@article.Uri.AbsoluteUri"><h4>@article.Title</h4></a>
+    </div>*@
     }
 
 </div>

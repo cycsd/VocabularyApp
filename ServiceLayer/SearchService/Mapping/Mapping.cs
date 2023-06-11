@@ -15,8 +15,7 @@ namespace ServiceLayer.SearchService.Mapping
         {
             var notMp3 = (SyndicationItem item) => !item.Title.Text.Contains(".mp3");
             var isArticle = (SyndicationItem item) => item.Categories.Count > 1;
-            var filter = notMp3 + isArticle;
-            return feed.MapVoaToArticleDtoWithFilter(filter);
+            return feed.MapVoaToArticleDtoWithFilter(filter:notMp3+isArticle);
         }
         public static IEnumerable<ArticleDto> MapVoaToArticleDtoWithFilter(
             this SyndicationFeed feed,
@@ -26,7 +25,7 @@ namespace ServiceLayer.SearchService.Mapping
             Title = item.Title.Text,
             Uri = item.Links[0].Uri,
             ImageUri = item.Links[1].Uri,
-            PublishDate = item.PublishDate.ToString("dd mm,yyyy"),
+            PublishDate = item.PublishDate.ToString("yyyy/MM/dd"),
 
         });
 

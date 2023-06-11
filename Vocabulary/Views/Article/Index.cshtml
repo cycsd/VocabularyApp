@@ -4,3 +4,38 @@
 
 
 <h1>@Html.Raw(Model.Content)</h1>
+<div class="fixed-bottom"><textarea id="sel"></textarea></div>
+
+@section Scripts{
+
+    <script type='text/javascript'>
+        function getSelectionText() {
+            var text = "";
+            var activeEl = document.activeElement;
+            var activeElTagName = activeEl ? activeEl.tagName.toLowerCase() : null;
+            if (window.getSelection && (activeElTagName != "input") && (activeElTagName != "textarea")) {
+                text = window.getSelection().toString();
+            }
+            return text;
+        }
+
+        document.onmouseup = document.onkeyup = function () {
+            var text = getSelectionText();
+            var searchUrl = '@Url.Action("Search","Vocabulary")';
+
+            if (!!text) {
+                var data = {
+                    keywords: text,
+                }
+                $.ajax({
+                    url: searchUrl,
+                    data: data,
+                }).done(function (res) {
+                    document.getElementById("sel").value = JSON.stringify(res);
+                })
+            }
+
+
+        };
+    </script>
+}
