@@ -1,7 +1,17 @@
+using DataLayer.EFCode;
+using Microsoft.EntityFrameworkCore;
+using System.Configuration;
+
+
 var builder = WebApplication.CreateBuilder(args);
 
+var config = builder.Configuration;
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddDbContext<VocabularyAppContext>(
+    options => options.UseSqlServer(config.GetConnectionString("DefaultConnection"))
+    );
 
 var app = builder.Build();
 
