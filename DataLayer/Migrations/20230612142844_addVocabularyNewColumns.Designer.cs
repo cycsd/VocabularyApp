@@ -4,6 +4,7 @@ using DataLayer.EFCode;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataLayer.Migrations
 {
     [DbContext(typeof(VocabularyAppContext))]
-    partial class VocabularyAppContextModelSnapshot : ModelSnapshot
+    [Migration("20230612142844_addVocabularyNewColumns")]
+    partial class addVocabularyNewColumns
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -53,7 +56,7 @@ namespace DataLayer.Migrations
 
                     b.Property<string>("Definition")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Example")
                         .HasColumnType("nvarchar(max)");
@@ -63,8 +66,7 @@ namespace DataLayer.Migrations
 
                     b.HasKey("DefineId");
 
-                    b.HasIndex("VocabularyId", "Definition")
-                        .IsUnique();
+                    b.HasIndex("VocabularyId");
 
                     b.ToTable("Defines");
                 });
@@ -107,12 +109,9 @@ namespace DataLayer.Migrations
 
                     b.Property<string>("Text")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("WordId");
-
-                    b.HasIndex("Text")
-                        .IsUnique();
 
                     b.ToTable("Words");
                 });

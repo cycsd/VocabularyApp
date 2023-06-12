@@ -4,7 +4,12 @@
 
 
 <h1>@Html.Raw(Model.Content)</h1>
-<div class="fixed-bottom"><textarea id="sel"></textarea></div>
+<div class="card" style="position:fixed;bottom:0; right:0;height:30%;width:18rem;background-color:burlywood">
+    <div class="card-body">
+    <h5 id ="word" class="card-title">123</h5>
+    </div>
+    @*<textarea id="sel"></textarea>*@
+    </div>
 
 @section Scripts{
 
@@ -31,7 +36,11 @@
                     url: searchUrl,
                     data: data,
                 }).done(function (res) {
-                    document.getElementById("sel").value = JSON.stringify(res);
+                    //var $word = $('#word');
+                    console.log(res.word);
+                    $('#word').text(res.word);
+                    word.text=(res.word);
+                    //document.getElementById("sel").value = JSON.stringify(res);
                 })
             }
 
