@@ -9,7 +9,7 @@ using System.Net.Http.Headers;
 
 namespace ServiceLayer.DictionaryService.Concrete
 {
-    public class DictionaryService
+    public class DictionaryService: ICoreDictionaryService
     {
         private readonly VocabularyAppContext _context;
         public DictionaryService(VocabularyAppContext context)
@@ -27,7 +27,7 @@ namespace ServiceLayer.DictionaryService.Concrete
             var SearchStrategies = new Func<Task<VocabularyDto>>[]
             {
                 ()=>SearchWordInDb(dbSearchCondition),
-                ()=>SearchWordByApi(word),
+                ()=>SearchWordOnOnlineDictionary(word),
             };
             return await SearchStrategies.Aggregate((search, fallback) =>
                                        () => search().OrElse(fallback))();
@@ -71,7 +71,7 @@ namespace ServiceLayer.DictionaryService.Concrete
                         : Task.FromException<VocabularyDto>(new KeyNotFoundException());
         }
 
-        public async Task<VocabularyDto> SearchWordByApi(string word)
+        public async Task<VocabularyDto> SearchWordOnOnlineDictionary(string word)
         {
             var apiUrl = @$"https://api.dictionaryapi.dev/api/v2/entries/en/{word?.Trim()}";
             var client = new HttpClient();
@@ -87,7 +87,7 @@ namespace ServiceLayer.DictionaryService.Concrete
             }
         }
 
-        public IQueryable<SimpleWordInfoDto> WordList()
+        public IQueryable<SimpleWordInfoDto> GetWordList()
         {
             var wordInfo = _context.Words.Select(w => new SimpleWordInfoDto
             {
@@ -113,7 +113,7 @@ namespace ServiceLayer.DictionaryService.Concrete
             {
                 if (wordDto.wordId == null)
                 {
-                    var word = await SearchWordByApi(wordDto.word);
+                    var word = await SearchWordOnOnlineDictionary(wordDto.word);
                     return InsertNew(word);
                 }
                 else

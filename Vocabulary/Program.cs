@@ -1,5 +1,7 @@
 using DataLayer.EFCode;
 using Microsoft.EntityFrameworkCore;
+using ServiceLayer.DictionaryService;
+using ServiceLayer.DictionaryService.Concrete;
 using System.Configuration;
 
 
@@ -12,6 +14,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<VocabularyAppContext>(
     options => options.UseSqlServer(config.GetConnectionString("DefaultConnection"))
     );
+builder.Services.AddScoped<ICoreDictionaryService, DictionaryService>();
 
 var app = builder.Build();
 

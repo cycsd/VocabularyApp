@@ -4,27 +4,29 @@ using Microsoft.VisualBasic;
 using Newtonsoft.Json;
 using ServiceLayer.DictionaryService;
 using ServiceLayer.DictionaryService.Concrete;
+using System.ComponentModel.Design;
 using System.Net.Http.Headers;
 
 namespace Vocabulary.Controllers
 {
     public class VocabularyController : Controller
     {
-        private readonly VocabularyAppContext _context;
-        public VocabularyController(VocabularyAppContext context)
+        private readonly ICoreDictionaryService _dictionaryService;
+
+        public VocabularyController(ICoreDictionaryService dictionaryService)
         {
-            _context = context;
+            _dictionaryService = dictionaryService;
         }
         public IActionResult Index()
         {
-            var wordList = new DictionaryService(_context).WordList().ToList();
+            var wordList = _dictionaryService.GetWordList().ToList();
             return View(wordList);
         }
 
         public async Task<IActionResult> WordDetail(int id, string word)
         {
 
-            var w = await new DictionaryService(_context).SearchWord(word, id);
+            var w = await _dictionaryService.SearchWord(word, id);
             return View(w);
         }
 
@@ -34,9 +36,8 @@ namespace Vocabulary.Controllers
             {
                 if (wordDto.wordId == null && !string.IsNullOrWhiteSpace(wordDto.word))
                 {
-                    var service = new DictionaryService(_context);
-                    wordDto = await service.SearchWordByApi(wordDto.word);
-                    var resp = service.InsertNew(wordDto);
+                    wordDto = await _dictionaryService.SearchWordOnOnlineDictionary(wordDto.word);
+                    var resp = _dictionaryService.InsertNew(wordDto);
                     return Ok(new VocabularyDto { word = resp.Text, wordId = resp.WordId });
                 }
                 return Ok(wordDto);
@@ -50,9 +51,8 @@ namespace Vocabulary.Controllers
         {
             try
             {
-                var service = new DictionaryService(_context);
-                var resp = await service.InserOrUpdateWord(wordDto);
-                return Ok(new VocabularyDto { word=resp.Text,wordId=resp.WordId});
+                var resp = await _dictionaryService.InserOrUpdateWord(wordDto);
+                return Ok(new VocabularyDto { word = resp.Text, wordId = resp.WordId });
             }
             catch (Exception ex)
             {
@@ -63,9 +63,7 @@ namespace Vocabulary.Controllers
         {
             try
             {
-                var dic = new DictionaryService(_context);
-                var word = await dic.SearchWord(keywords);
-
+                var word = await _dictionaryService.SearchWord(keywords);
                 return Ok(word);
             }
             catch (Exception ex)

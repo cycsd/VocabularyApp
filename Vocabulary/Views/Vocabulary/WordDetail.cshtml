@@ -56,12 +56,13 @@
                 word: word,
                 note: note,
             };
-
+   
             $.ajax({
                 url: save_url,
                 data: data,
             }).done(function(res) {
-                window.history.back();
+                var backToList = '@Url.Action("Index","Vocabulary")';
+                window.location.replace(backToList);
             });
         };
     </script>
