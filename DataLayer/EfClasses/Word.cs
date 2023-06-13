@@ -8,7 +8,7 @@ namespace DataLayer.EfClasses
 
         public string Text { get; set; }
 
-        public string Note { get; set; }
+        public string? Note { get; set; }
         public ICollection<Vocabulary> Vocabularies { get; set; }
     }
 }

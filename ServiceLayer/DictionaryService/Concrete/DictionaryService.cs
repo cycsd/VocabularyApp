@@ -24,12 +24,12 @@ namespace ServiceLayer.DictionaryService.Concrete
                    ? w => w.Text == word
                    : w => w.WordId == id;
 
-            var SearchSolutions = new Func<Task<VocabularyDto>>[]
+            var SearchStrategies = new Func<Task<VocabularyDto>>[]
             {
                 ()=>SearchWordInDb(dbSearchCondition),
                 ()=>SearchWordByApi(word),
             };
-            return await SearchSolutions.Aggregate((search, fallback) =>
+            return await SearchStrategies.Aggregate((search, fallback) =>
                                        () => search().OrElse(fallback))();
 
         }
@@ -71,9 +71,9 @@ namespace ServiceLayer.DictionaryService.Concrete
                         : Task.FromException<VocabularyDto>(new KeyNotFoundException());
         }
 
-        private async Task<VocabularyDto> SearchWordByApi(string word)
+        public async Task<VocabularyDto> SearchWordByApi(string word)
         {
-            var apiUrl = @$"https://api.dictionaryapi.dev/api/v2/entries/en/{word.Trim()}";
+            var apiUrl = @$"https://api.dictionaryapi.dev/api/v2/entries/en/{word?.Trim()}";
             var client = new HttpClient();
             var response = await client.GetAsync(apiUrl);
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
@@ -107,13 +107,14 @@ namespace ServiceLayer.DictionaryService.Concrete
             return wordInfo;
         }
 
-        public Word InserOrUpdateWord(VocabularyDto wordDto)
+        public async Task<Word> InserOrUpdateWord(VocabularyDto wordDto)
         {
             try
             {
                 if (wordDto.wordId == null)
                 {
-                    return InsertNew(wordDto);
+                    var word = await SearchWordByApi(wordDto.word);
+                    return InsertNew(word);
                 }
                 else
                 {
@@ -128,7 +129,7 @@ namespace ServiceLayer.DictionaryService.Concrete
 
         }
 
-        private Word InsertNew(VocabularyDto wordInfo)
+        public Word InsertNew(VocabularyDto wordInfo)
         {
             var word = wordInfo.ProjectToWord();
             _context.Words.Add(word);

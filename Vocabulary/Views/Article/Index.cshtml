@@ -6,14 +6,32 @@
 <h1>@Html.Raw(Model.Content)</h1>
 <div class="card" style="position:fixed;bottom:0; right:0;height:30%;width:18rem;background-color:burlywood">
     <div class="card-body">
-    <h5 id ="word" class="card-title">123</h5>
+        <p id="wordId" hidden></p>
+        <h5 id="word" class="card-title"></h5>
+        <button type="button" class="btn-primary" onclick="Save()">儲存</button>
     </div>
     @*<textarea id="sel"></textarea>*@
-    </div>
+</div>
 
 @section Scripts{
 
     <script type='text/javascript'>
+
+        function Save() {
+            var save_url = '@Url.Action("Save","Vocabulary")';
+            var word = $('#word').text();
+            var id = $('#wordId').text();
+            var data = {
+                wordId: id,
+                word: word,
+            };
+            $.ajax({
+                url: save_url,
+                data: data,
+            }).done(function (res) {
+                    $('#wordId').text(res.wordId);
+                });
+        };
         function getSelectionText() {
             var text = "";
             var activeEl = document.activeElement;
@@ -36,11 +54,8 @@
                     url: searchUrl,
                     data: data,
                 }).done(function (res) {
-                    //var $word = $('#word');
-                    console.log(res.word);
                     $('#word').text(res.word);
-                    //word.text=(res.word);
-                    //document.getElementById("sel").value = JSON.stringify(res);
+                    $('#wordId').text(res.wordId);
                 })
             }
 

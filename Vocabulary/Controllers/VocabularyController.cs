@@ -1,5 +1,6 @@
 ﻿using DataLayer.EFCode;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualBasic;
 using Newtonsoft.Json;
 using ServiceLayer.DictionaryService;
 using ServiceLayer.DictionaryService.Concrete;
@@ -27,12 +28,36 @@ namespace Vocabulary.Controllers
             return View(w);
         }
 
-
-        public IActionResult Save(VocabularyDto wordDto)
+        public async Task<IActionResult> SimpleSave(VocabularyDto wordDto)
         {
-            var service = new DictionaryService(_context);
-            service.InserOrUpdateWord(wordDto);
-            return Ok();
+            try
+            {
+                if (wordDto.wordId == null && !string.IsNullOrWhiteSpace(wordDto.word))
+                {
+                    var service = new DictionaryService(_context);
+                    wordDto = await service.SearchWordByApi(wordDto.word);
+                    var resp = service.InsertNew(wordDto);
+                    return Ok(new VocabularyDto { word = resp.Text, wordId = resp.WordId });
+                }
+                return Ok(wordDto);
+            }
+            catch (Exception ex)
+            {
+                return NotFound();
+            }
+        }
+        public async Task<IActionResult> Save(VocabularyDto wordDto)
+        {
+            try
+            {
+                var service = new DictionaryService(_context);
+                var resp = await service.InserOrUpdateWord(wordDto);
+                return Ok(new VocabularyDto { word=resp.Text,wordId=resp.WordId});
+            }
+            catch (Exception ex)
+            {
+                return NotFound();
+            }
         }
         public async Task<IActionResult> Search(string keywords)
         {
