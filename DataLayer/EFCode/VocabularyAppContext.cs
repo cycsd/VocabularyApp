@@ -21,6 +21,9 @@ namespace DataLayer.EFCode
             modelBuilder.Entity<Word>()
                 .HasIndex(w => w.Text)
                 .IsUnique();
+            modelBuilder.Entity<Vocabulary>()
+                .HasIndex(v => new { v.WordId, v.PartOfSpeech })
+                .IsUnique();
 
             modelBuilder.Entity<Define>()
                 .HasIndex(d => new { d.VocabularyId, d.Definition })

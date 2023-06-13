@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,6 +16,9 @@ namespace DataLayer.EfClasses
         //International Phonetic Alphabet
         public string? IPA { get; set; }
         public string? Pronounce { get; set; }
+
+
+        public int WordId { get; set; }
         public Word Word { get; set; }
 
         public ICollection<Define> Definitions { get; set; }

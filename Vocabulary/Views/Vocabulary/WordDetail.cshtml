@@ -1,0 +1,69 @@
+﻿@model ServiceLayer.DictionaryService.VocabularyDto
+@{
+}
+
+<h3>@Model.word</h3>
+@foreach (var phonetic in Model.phonetics)
+{
+    if (!string.IsNullOrEmpty(phonetic.audio))
+    {
+        <audio controls autoplay>
+            <source src="@phonetic.audio" />
+        </audio>
+        <small>@phonetic.text</small>
+    }
+
+}
+@foreach (var meaning in Model.meanings)
+{
+    <div>
+        <label class="btn btn-primary btn-lg">詞性</label>
+        <label>@meaning.partOfSpeech</label>
+        @foreach (var definition in meaning.definitions)
+        {
+            <div>
+                <label>解釋:</label>
+                <label>@definition.definition</label>
+            </div>
+            <div>
+                <label>例句</label>
+                <p>@definition.example</p>
+            </div>
+
+        }
+    </div>
+
+
+}
+<div>
+    <label class="btn btn-primary btn-lg">筆記</label>
+    <textarea asp-for="note" class="form-control" rows="3">
+        @Model.note
+       </textarea>
+</div>
+<button type="button" class="btn-light" onclick="return Save(@Model.wordId,'@Model.word')">儲存</button>
+
+@section Scripts{
+    <script type='text/javascript'>
+
+        function Save(id, word) {
+            var save_url = '@Url.Action("Save","Vocabulary")';
+            var note = $('#note').val();
+            console.log(save_url);
+            console.log(word);
+            var data = {
+                wordId: id,
+                word: word,
+                note: note,
+            };
+            console.log(data);
+
+            $.ajax({
+                url: save_url,
+                data: data,
+            }).done(function(res) {
+                window.history.back();
+            });
+        };
+    </script>
+}

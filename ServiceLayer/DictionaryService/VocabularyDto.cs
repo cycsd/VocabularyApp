@@ -9,6 +9,8 @@ namespace ServiceLayer.DictionaryService
 {
     public class VocabularyDto
     {
+        public int? wordId { get; set; }
+        public string note { get; set; }
         public string word { get; set; }
         public string phonetic { get; set; }
         public List<Phonetic> phonetics { get; set; }

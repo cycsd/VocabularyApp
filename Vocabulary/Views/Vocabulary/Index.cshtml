@@ -1,5 +1,49 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model List< ServiceLayer.DictionaryService.SimpleWordInfoDto>
 @{
+}
+
+@foreach (var word in Model)
+{
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">@word.Text</h5>
+            <a type="button" class="btn btn-primary" asp-area="" asp-controller="Vocabulary" asp-action="WordDetail" asp-route-id="@word.WordId" asp-route-word="@word.Text">
+                修改
+            </a>
+            <ul id="@word.Text" class="nav nav-tabs card-header-tabs" role="tablist">
+                @foreach (var partOfSpeech in word.PartOfSpeech)
+                {
+                    var name = word.Text + partOfSpeech.PartOfSpeech;
+                    var tabId = $"{name}-tab";
+                    var href = $"#{name}";
+                    <li class="nav-item" id="@tabId" data-toggle="tab" href="@href" role="tab" aria-controls="@name">
+                        <a class="nav-link"> @partOfSpeech.PartOfSpeech</a>
+                    </li>
+                }
+            </ul>
+            @{
+                var contentId = word.Text + "Content";
+            }
+            <div class="tab-content" id="@contentId">
+                @for (var i = 0; i < word.PartOfSpeech.Count(); i++)
+                {
+                    var list = word.PartOfSpeech.ToList();
+                    var name = word.Text + list[i].PartOfSpeech;
+                    var tabId = $"{name}-tab";
+                    var show = i == 0 ? "show active" : "";
+                    <div class="tab-pane fade @show" id="@name" role="tabpanel" aria-labelledby="@tabId">
+
+                        @foreach (var def in list[i].Definitions)
+                        {
+                            <p>@def</p>
+                        }
+
+                    </div>
+                }
+            </div>
+            <div><p>@word.Note</p></div>
+        </div>
+    </div>
+
+
 }

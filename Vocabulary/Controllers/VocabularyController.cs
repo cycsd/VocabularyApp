@@ -9,29 +9,44 @@ namespace Vocabulary.Controllers
 {
     public class VocabularyController : Controller
     {
+        private readonly VocabularyAppContext _context;
+        public VocabularyController(VocabularyAppContext context)
+        {
+            _context = context;
+        }
         public IActionResult Index()
         {
-            return View();
+            var wordList = new DictionaryService(_context).WordList().ToList();
+            return View(wordList);
         }
 
-        public async Task<IActionResult> Word() {
-
-            var word =await new DictionaryService().SearchWord("glance");
-            return View(word);
-        }
-
-
-        public IActionResult Save(VocabularyDto word)
+        public async Task<IActionResult> WordDetail(int id, string word)
         {
 
+            var w = await new DictionaryService(_context).SearchWord(word, id);
+            return View(w);
+        }
+
+
+        public IActionResult Save(VocabularyDto wordDto)
+        {
+            var service = new DictionaryService(_context);
+            service.InserOrUpdateWord(wordDto);
             return Ok();
         }
-        public async Task<IActionResult> Search(string keywords, [FromServices]VocabularyAppContext context)
+        public async Task<IActionResult> Search(string keywords)
         {
-            var dic = new DictionaryService();
-            var word = await dic.SearchWord(keywords);
-            dic.AddWord(word, context);
-            return Ok(word);
+            try
+            {
+                var dic = new DictionaryService(_context);
+                var word = await dic.SearchWord(keywords);
+
+                return Ok(word);
+            }
+            catch (Exception ex)
+            {
+                return NotFound();
+            }
         }
     }
 }
