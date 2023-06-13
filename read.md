@@ -1,0 +1,1 @@
+![操作示範](https://github.com/cycsd/Vocabulary/pic/)
