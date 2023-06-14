@@ -1,12 +1,31 @@
-﻿@model List< ServiceLayer.DictionaryService.SimpleWordInfoDto>
+﻿@model ServiceLayer.DictionaryService.WordListCombineFilterDto
 @{
 }
-
-@foreach (var word in Model)
+<form role="form">
+    <div class="input-group">
+        <div class="form-outline">
+            <input type="search" name="SearchText" asp-for="SortFilterData.SearchText" placeholder="Search" class="form-control" />
+        </div>
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-search"></i>
+        </button>
+    </div>
+</form>
+@foreach (var word in Model.WordList)
 {
     <div class="card">
         <div class="card-body">
-            <h5 class="card-title">@word.Text</h5>
+            <div class="card-header">
+                <h5 class="card-title">@word.Text</h5>
+                <div class="dropdown">
+                    <button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown">Category</button>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item">00</a>
+                            <a class="dropdown-item">01</a>
+                            <a class="dropdown-item">02</a>
+                        </div>
+                </div>
+            </div>
             <a type="button" class="btn btn-secondary" asp-area="" asp-controller="Vocabulary" asp-action="WordDetail" asp-route-id="@word.WordId" asp-route-word="@word.Text">
                 修改
             </a>
@@ -16,7 +35,7 @@
                     var name = word.Text + partOfSpeech.PartOfSpeech;
                     var tabId = $"{name}-tab";
                     var href = $"#{name}";
-                    <li  class="nav-item" role="presentation">
+                    <li class="nav-item" role="presentation">
                         <button type="button" class="nav-link" id="@tabId" data-toggle="pill" href="@href" role="tab" aria-controls="@name"> @partOfSpeech.PartOfSpeech</button>
                     </li>
                 }
@@ -35,7 +54,7 @@
 
                         @foreach (var def in list[i].Definitions)
                         {
-                            <p>@def</p>
+                            <p>-@def</p>
                         }
 
                     </div>

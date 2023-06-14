@@ -2,13 +2,17 @@
 @{
 }
 
-
-<h1>@Html.Raw(Model.Content)</h1>
-<div class="card" style="position:fixed;bottom:0; right:0;height:30%;width:18rem;background-color:burlywood">
+<audio controls>
+    <source src="@Model.AudioUri" />
+</audio>
+@Html.Raw(Model.Content)
+<div class="card" style="position:fixed;bottom:0; right:0;height:30%;width:18rem;>
     <div class="card-body">
         <p id="wordId" hidden></p>
         <h5 id="word" class="card-title"></h5>
         <button type="button" class="btn-primary" onclick="Save()">儲存</button>
+        <p>解釋</p>
+        <textarea id="define"></textarea>
     </div>
     @*<textarea id="sel"></textarea>*@
 </div>
@@ -45,7 +49,7 @@
         document.onmouseup = document.onkeyup = function () {
             var text = getSelectionText();
             var searchUrl = '@Url.Action("Search","Vocabulary")';
-
+            
             if (!!text) {
                 var data = {
                     keywords: text,
@@ -54,8 +58,15 @@
                     url: searchUrl,
                     data: data,
                 }).done(function (res) {
-                    $('#word').text(res.word);
+                    var define = res.meanings.find(m=>true).definitions.find(d=>true).definition;
+                    $('#word').text(text);
                     $('#wordId').text(res.wordId);
+                    $('#define').val(define);
+                }).fail(function(jqXHR, textStatus, ErrorThrow) {
+                    $('#word').text(text);
+                    $('#wordId').text("");
+                    $('#define').val("Not Found");
+
                 })
             }
 

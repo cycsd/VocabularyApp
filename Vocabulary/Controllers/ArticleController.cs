@@ -7,10 +7,10 @@ namespace Vocabulary.Controllers
 {
     public class ArticleController : Controller
     {
-        public ActionResult Index(ParagraphDto paragraph)
+        public async Task<ActionResult> Index(ParagraphDto paragraph)
         {
             var serv = new ArticleService();
-            var html = serv.ParseParagraph(paragraph);
+            var html = await serv.ParseParagraph(paragraph);
             return View(html);
         }
 

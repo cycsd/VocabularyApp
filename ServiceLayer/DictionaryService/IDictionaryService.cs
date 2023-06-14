@@ -11,7 +11,7 @@ namespace ServiceLayer.DictionaryService
     {
         Task<VocabularyDto> SearchWord(string word, int? id = null);
         Task<VocabularyDto> SearchWordOnOnlineDictionary(string word);
-        IQueryable<SimpleWordInfoDto> GetWordList();
+        IQueryable<SimpleWordInfoDto> GetWordListWithFilter(SortFilterOptions options);
         Task<Word> InserOrUpdateWord(VocabularyDto wordDto);
         Word InsertNew(VocabularyDto wordInfo);
 

@@ -17,10 +17,10 @@ namespace Vocabulary.Controllers
         {
             _dictionaryService = dictionaryService;
         }
-        public IActionResult Index()
+        public IActionResult Index(SortFilterOptions options)
         {
-            var wordList = _dictionaryService.GetWordList().ToList();
-            return View(wordList);
+            var wordList = _dictionaryService.GetWordListWithFilter(options).ToList();
+            return View(new WordListCombineFilterDto (options,wordList));
         }
 
         public async Task<IActionResult> WordDetail(int id, string word)

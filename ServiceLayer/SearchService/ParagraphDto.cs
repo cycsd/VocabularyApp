@@ -9,7 +9,9 @@ namespace ServiceLayer.SearchService
     public class ParagraphDto
     {
 
-        public string Uri { get; init; }
-        public string Content { get; init; }
+        public string? Uri { get; init; }
+
+        public string? AudioUri { get; init; }
+        public string? Content { get; init; }
     }
 }

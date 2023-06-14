@@ -1,4 +1,5 @@
 ﻿using AngleSharp;
+using AngleSharp.Html.Dom;
 using HtmlAgilityPack;
 using Microsoft.VisualBasic;
 using ServiceLayer.SearchService.Mapping;
@@ -25,15 +26,21 @@ namespace ServiceLayer.SearchService.Concrete
         }
 
 
-        public ParagraphDto ParseParagraph(ParagraphDto paragraph)
+        public async Task<ParagraphDto> ParseParagraph(ParagraphDto paragraph)
         {
 
             var config = Configuration.Default.WithDefaultLoader().WithCss();
             var context = BrowsingContext.New(config);
-            var doc = context.OpenAsync(paragraph.Uri).Result;
+            var doc = await context.OpenAsync(paragraph.Uri);
             var content = doc.QuerySelector("div.wsw");
+            var mediaHolder = content?.QuerySelector("div.wsw__embed");
+            var audio = (mediaHolder?.QuerySelector("a.c-mmp__fallback-link") as IHtmlAnchorElement)?.Href;
+            content?.RemoveChild(mediaHolder);
 
-            return new ParagraphDto { Uri = paragraph.Uri, Content = content.InnerHtml };
+            return new ParagraphDto { 
+                Uri = paragraph.Uri,
+                AudioUri=audio, 
+                Content = content.InnerHtml };
         }
     }
 

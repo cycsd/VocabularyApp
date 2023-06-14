@@ -2,14 +2,14 @@
 using DataLayer.EFCode;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using ServiceLayer.DictionaryService.Mapping;
+using ServiceLayer.DictionaryService.Query;
 using ServiceLayer.HelperExtension;
 using System.Linq.Expressions;
 using System.Net.Http.Headers;
 
 namespace ServiceLayer.DictionaryService.Concrete
 {
-    public class DictionaryService: ICoreDictionaryService
+    public class DictionaryService : ICoreDictionaryService
     {
         private readonly VocabularyAppContext _context;
         public DictionaryService(VocabularyAppContext context)
@@ -19,7 +19,7 @@ namespace ServiceLayer.DictionaryService.Concrete
 
         public async Task<VocabularyDto> SearchWord(string word, int? id = null)
         {
-            Expression<Func<Word, bool>> dbSearchCondition = 
+            Expression<Func<Word, bool>> dbSearchCondition =
                 id == null
                    ? w => w.Text == word
                    : w => w.WordId == id;
@@ -38,33 +38,9 @@ namespace ServiceLayer.DictionaryService.Concrete
             )
         {
             var word = _context.Words
-               .Where(predict)
-               .Select(w => new VocabularyDto
-               {
-                   wordId = w.WordId,
-                   word = w.Text,
-                   note = w.Note,
-                   phonetics = w.Vocabularies.Select(vocabulary =>
-                                new Phonetic
-                                {
-                                    text = vocabulary.IPA,
-                                    audio = vocabulary.Pronounce,
-                                }).ToList(),
-                   meanings = (from vocabulary in w.Vocabularies
-                               select new Meaning
-                               {
-                                   partOfSpeech = vocabulary.PartOfSpeech,
-                                   definitions = (from define in vocabulary.Definitions
-                                                  select new Definition
-                                                  {
-                                                      definition = define.Definition,
-                                                      example = define.Example,
-                                                  }).ToList(),
-                               }).ToList()
-
-               })
-                 .FirstOrDefault();
-
+                        .Where(predict)
+                        .ProjectToVocabulary()
+                        .FirstOrDefault();
 
             return word != null
                         ? Task.FromResult(word)
@@ -87,25 +63,15 @@ namespace ServiceLayer.DictionaryService.Concrete
             }
         }
 
-        public IQueryable<SimpleWordInfoDto> GetWordList()
+        public IQueryable<SimpleWordInfoDto> GetWordListWithFilter(SortFilterOptions options)
         {
-            var wordInfo = _context.Words.Select(w => new SimpleWordInfoDto
-            {
-                WordId = w.WordId,
-                Text = w.Text,
-                Note = w.Note,
-                PartOfSpeech = w.Vocabularies.Select(v =>
-                new DefinitionInfoDto
-                {
-                    PartOfSpeech = v.PartOfSpeech,
-                    Definitions = v.Definitions.Select(d => d.Definition)
-                }),
-                PronuanceAudioUrl = w.Vocabularies.Select(v => v.Pronounce)
-                                        .FirstOrDefault(p => !string.IsNullOrWhiteSpace(p))
-                                        ?? string.Empty,
-            });
+            var wordInfo = _context.Words
+                            .AsNoTracking()
+                            .MapWordToSimpleWordDto()
+                            .FilterWordInfoBy(options);
             return wordInfo;
         }
+
 
         public async Task<Word> InserOrUpdateWord(VocabularyDto wordDto)
         {
@@ -145,6 +111,7 @@ namespace ServiceLayer.DictionaryService.Concrete
             _context.SaveChanges();
             return word;
         }
+
 
     }
 }
