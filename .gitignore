@@ -338,3 +338,5 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+/DataLayer/Migrations/20230615031607_AddCategory.Designer.cs
+/DataLayer/Migrations/20230615031607_AddCategory.cs
