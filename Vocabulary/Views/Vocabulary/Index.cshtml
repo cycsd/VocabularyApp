@@ -17,14 +17,14 @@
         <div class="card-body">
             <div class="card-header">
                 <h5 class="card-title">@word.Text</h5>
-                <div class="dropdown">
+@*                <div class="dropdown">
                     <button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown">Category</button>
                         <div class="dropdown-menu">
                             <a class="dropdown-item">00</a>
                             <a class="dropdown-item">01</a>
                             <a class="dropdown-item">02</a>
                         </div>
-                </div>
+                </div>*@
             </div>
             <a type="button" class="btn btn-secondary" asp-area="" asp-controller="Vocabulary" asp-action="WordDetail" asp-route-id="@word.WordId" asp-route-word="@word.Text">
                 修改
