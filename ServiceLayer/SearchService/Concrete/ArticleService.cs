@@ -26,7 +26,7 @@ namespace ServiceLayer.SearchService.Concrete
         }
 
 
-        public async Task<ParagraphDto> ParseParagraph(ParagraphDto paragraph)
+        public async Task<ParagraphDto> GetAndParseParagraph(ParagraphDto paragraph)
         {
 
             var config = Configuration.Default.WithDefaultLoader().WithCss();

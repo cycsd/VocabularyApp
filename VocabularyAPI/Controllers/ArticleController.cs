@@ -10,12 +10,19 @@ namespace VocabularyAPI.Controllers
     [ApiController]
     public class ArticleController : ControllerBase
     {
-        [HttpGet()]
-        public IEnumerable<ArticleDto> GetArticle()
+        [HttpGet("articles")]
+        public IActionResult GetArticles()
         {
             var serv = new ArticleService();
             var articeList = serv.GetArticles();
-            return articeList;
+            return Ok(articeList);
+        }
+        [HttpGet("paragraph")]
+        public async Task<IActionResult> GetParagraph(string path)
+        {
+            var serv = new ArticleService();
+            var paragraph =await serv.GetAndParseParagraph(new ParagraphDto { Uri=path});
+            return Ok(paragraph);
         }
 
     }

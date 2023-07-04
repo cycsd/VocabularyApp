@@ -10,7 +10,7 @@ namespace Vocabulary.Controllers
         public async Task<ActionResult> Index(ParagraphDto paragraph)
         {
             var serv = new ArticleService();
-            var html = await serv.ParseParagraph(paragraph);
+            var html = await serv.GetAndParseParagraph(paragraph);
             return View(html);
         }
 
