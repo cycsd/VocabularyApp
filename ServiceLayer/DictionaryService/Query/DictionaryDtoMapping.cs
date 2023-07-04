@@ -60,21 +60,24 @@ namespace ServiceLayer.DictionaryService.Query
             });
         }
         public static IQueryable<SimpleWordInfoDto> MapWordToSimpleWordDto(this IQueryable<Word> words)
-            => words.Select(w => new SimpleWordInfoDto
+            => words.Select(word=>word.MapWordToSimpleWordDto());
+
+        public static SimpleWordInfoDto MapWordToSimpleWordDto(this Word word)
+            => new SimpleWordInfoDto
             {
-                WordId = w.WordId,
-                Text = w.Text,
-                Note = w.Note,
-                PartOfSpeech = w.Vocabularies.Select(v =>
+                WordId = word.WordId,
+                Text = word.Text,
+                Note = word.Note,
+                PartOfSpeech = word.Vocabularies.Select(v =>
                 new DefinitionInfoDto
                 {
                     PartOfSpeech = v.PartOfSpeech,
                     Definitions = v.Definitions.Select(d => d.Definition)
                 }),
-                PronuanceAudioUrl = w.Vocabularies.Select(v => v.Pronounce)
+                PronuanceAudioUrl = word.Vocabularies.Select(v => v.Pronounce)
                                         .FirstOrDefault(p => !string.IsNullOrWhiteSpace(p))
                                         ?? string.Empty,
-            });
+            };
 
 
     }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ServiceLayer.DictionaryService;
+using ServiceLayer.DictionaryService.Query;
 
 namespace VocabularyAPI.Controllers
 {
@@ -19,7 +20,10 @@ namespace VocabularyAPI.Controllers
         {
 
             var vocabulary = await _dictionaryService.SearchWord(word, id);
-            return Ok(vocabulary);
+            var simpleWordInfo = vocabulary
+                                    .ProjectToWord()
+                                    .MapWordToSimpleWordDto();
+            return Ok(simpleWordInfo);
         }
     }
 }
