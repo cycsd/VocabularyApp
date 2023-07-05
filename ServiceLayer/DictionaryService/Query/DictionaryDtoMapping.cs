@@ -74,7 +74,7 @@ namespace ServiceLayer.DictionaryService.Query
                     PartOfSpeech = v.PartOfSpeech,
                     Definitions = v.Definitions.Select(d => d.Definition)
                 }),
-                PronuanceAudioUrl = word.Vocabularies.Select(v => v.Pronounce)
+                PronounceAudioUrl = word.Vocabularies.Select(v => v.Pronounce)
                                         .FirstOrDefault(p => !string.IsNullOrWhiteSpace(p))
                                         ?? string.Empty,
             };

@@ -13,7 +13,7 @@ namespace ServiceLayer.DictionaryService
         public IEnumerable<DefinitionInfoDto> PartOfSpeech { get; set; }
         public string Note { get; set; }
 
-        public string PronuanceAudioUrl { get; set; }
+        public string PronounceAudioUrl { get; set; }
     }
 
     public class DefinitionInfoDto
