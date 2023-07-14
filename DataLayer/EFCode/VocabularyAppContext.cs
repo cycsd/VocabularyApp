@@ -29,6 +29,7 @@ namespace DataLayer.EFCode
                 .HasIndex(d => new { d.VocabularyId, d.Definition })
                 .IsUnique();
         }
+        public DbSet<CategoryTag> CategoryTags { get; set; }
 
         public DbSet<Word> Words { get; set; }
         public DbSet<Vocabulary> Vocabularies { get; set; }

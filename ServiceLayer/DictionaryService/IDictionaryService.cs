@@ -15,7 +15,5 @@ namespace ServiceLayer.DictionaryService
         Task<Word> InserOrUpdateWord(VocabularyDto wordDto);
         Word InsertNew(VocabularyDto wordInfo);
 
-
-
     }
 }

@@ -10,5 +10,7 @@ namespace DataLayer.EfClasses
 
         public string? Note { get; set; }
         public ICollection<Vocabulary> Vocabularies { get; set; }
+        public ICollection<CategoryTag> CategoryTags { get; set; }
+
     }
 }
