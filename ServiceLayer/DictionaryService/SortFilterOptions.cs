@@ -8,6 +8,7 @@ namespace ServiceLayer.DictionaryService
 {
     public class SortFilterOptions
     {
-        public string? SearchText { get; set; }
+        public string? Text { get; set; }
+        public IEnumerable<KeyValuePair>? Categories { get; set; }
     }
 }

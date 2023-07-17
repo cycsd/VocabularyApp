@@ -46,8 +46,16 @@ namespace VocabularyAPI.Controllers
         [HttpPost("[action]")]
         public IActionResult Words(SortFilterOptions options)
         {
-            var wordList = _dictionaryService.GetWordListWithFilter(options).ToList();
-            return Ok(wordList);
+            try
+            {
+                var wordList = _dictionaryService.GetWordListWithFilter(options).ToList();
+                return Ok(wordList);
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
+
         }
         [HttpPost("[action]")]
         public async Task<IActionResult> SaveNew(SaveWordDto wordInfo)
