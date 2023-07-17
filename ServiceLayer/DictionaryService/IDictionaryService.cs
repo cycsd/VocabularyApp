@@ -9,11 +9,13 @@ namespace ServiceLayer.DictionaryService
 {
     public interface ICoreDictionaryService
     {
-        Task<VocabularyDto> SearchWord(string word, int? id = null);
-        Task<VocabularyDto> SearchWordOnOnlineDictionary(string word);
+        Task<IQueryable<Word>> SearchWord(string word, int? id = null);
+        Task<IEnumerable<VocabularyDto>> SearchWordOnOnlineDictionary(string word);
         IQueryable<SimpleWordInfoDto> GetWordListWithFilter(SortFilterOptions options);
         Task<Word> InserOrUpdateWord(VocabularyDto wordDto);
         Word InsertNew(VocabularyDto wordInfo);
+        Task<Word> InsertNew(SaveWordDto wordInfo);
+        Word ChangeCategories(SaveWordDto wordInfo);
 
     }
 }

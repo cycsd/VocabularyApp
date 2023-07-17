@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,10 +10,11 @@ namespace ServiceLayer.DictionaryService.Query
 {
     public static class DictionaryDtoMapping
     {
-        public static Word ProjectToWord(this VocabularyDto wordDto)
+        public static Word MapToWord(this VocabularyDto wordDto)
         {
             var word = new Word
             {
+                CategoryTags = new List<CategoryTag>(),
                 Text = wordDto.word,
                 Vocabularies = wordDto.meanings
                 .Select(mean => new Vocabulary
@@ -32,7 +34,7 @@ namespace ServiceLayer.DictionaryService.Query
             };
             return word;
         }
-        public static IQueryable<VocabularyDto> ProjectToVocabulary(this IQueryable<Word> source)
+        public static IQueryable<VocabularyDto> MapToVocabulary(this IQueryable<Word> source)
         {
             return source.Select(w => new VocabularyDto
             {
@@ -60,11 +62,15 @@ namespace ServiceLayer.DictionaryService.Query
             });
         }
         public static IQueryable<SimpleWordInfoDto> MapWordToSimpleWordDto(this IQueryable<Word> words)
-            => words.Select(word=>word.MapWordToSimpleWordDto());
+            => words.Select(MapWordToSimpleWordDto());
 
         public static SimpleWordInfoDto MapWordToSimpleWordDto(this Word word)
+            => MapWordToSimpleWordDto().Compile()(word);
+        private static Expression<Func<Word, SimpleWordInfoDto>> MapWordToSimpleWordDto()
+            => word
             => new SimpleWordInfoDto
             {
+                Categories = word.CategoryTags.MapToKeyValuePair(),
                 WordId = word.WordId,
                 Text = word.Text,
                 Note = word.Note,
@@ -75,9 +81,10 @@ namespace ServiceLayer.DictionaryService.Query
                     Definitions = v.Definitions.Select(d => d.Definition)
                 }),
                 PronounceAudioUrl = word.Vocabularies.Select(v => v.Pronounce)
-                                        .FirstOrDefault(p => !string.IsNullOrWhiteSpace(p))
-                                        ?? string.Empty,
+                                .FirstOrDefault(p => !string.IsNullOrWhiteSpace(p))
+                                ?? string.Empty,
             };
+
 
 
     }

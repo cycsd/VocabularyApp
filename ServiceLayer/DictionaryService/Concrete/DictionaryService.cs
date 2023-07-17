@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using ServiceLayer.DictionaryService.Query;
 using ServiceLayer.HelperExtension;
+using System.ComponentModel.Design;
 using System.Linq.Expressions;
 using System.Net.Http.Headers;
 
@@ -17,37 +18,38 @@ namespace ServiceLayer.DictionaryService.Concrete
             _context = context;
         }
 
-        public async Task<VocabularyDto> SearchWord(string word, int? id = null)
+        public async Task<IQueryable<Word>> SearchWord(string word, int? id = null)
         {
             Expression<Func<Word, bool>> dbSearchCondition =
                 id == null
                    ? w => w.Text == word
                    : w => w.WordId == id;
 
-            var SearchStrategies = new Func<Task<VocabularyDto>>[]
+            var SearchStrategies = new Func<Task<IQueryable<Word>>>[]
             {
                 ()=>SearchWordInDb(dbSearchCondition),
-                ()=>SearchWordOnOnlineDictionary(word),
+                ()=>SearchWordOnOnlineDictionary(word)
+                    .ContinueWith(w=>w.Result.Select(v=>v.MapToWord())
+                                            .AsQueryable(),TaskContinuationOptions.OnlyOnRanToCompletion)                    ,
             };
             return await SearchStrategies.Aggregate((search, fallback) =>
                                        () => search().OrElse(fallback))();
 
         }
-        private Task<VocabularyDto> SearchWordInDb(
+        private Task<IQueryable<Word>> SearchWordInDb(
             Expression<Func<Word, bool>> predict
             )
         {
             var word = _context.Words
-                        .Where(predict)
-                        .ProjectToVocabulary()
-                        .FirstOrDefault();
+                        .Where(predict);
 
-            return word != null
+
+            return word.FirstOrDefault() != null
                         ? Task.FromResult(word)
-                        : Task.FromException<VocabularyDto>(new KeyNotFoundException());
+                        : Task.FromException<IQueryable<Word>>(new KeyNotFoundException());
         }
 
-        public async Task<VocabularyDto> SearchWordOnOnlineDictionary(string word)
+        public async Task<IEnumerable<VocabularyDto>> SearchWordOnOnlineDictionary(string word)
         {
             var apiUrl = @$"https://api.dictionaryapi.dev/api/v2/entries/en/{word?.Trim()}";
             var client = new HttpClient();
@@ -55,11 +57,11 @@ namespace ServiceLayer.DictionaryService.Concrete
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 var voc = await response.Content.ReadAsStringAsync();
-                return JsonConvert.DeserializeObject<IEnumerable<VocabularyDto>>(voc).First();
+                return JsonConvert.DeserializeObject<IEnumerable<VocabularyDto>>(voc);
             }
             else
             {
-                return await Task.FromException<VocabularyDto>(new KeyNotFoundException());
+                return await Task.FromException<IEnumerable<VocabularyDto>>(new KeyNotFoundException());
             }
         }
 
@@ -80,7 +82,7 @@ namespace ServiceLayer.DictionaryService.Concrete
                 if (wordDto.wordId == null)
                 {
                     var word = await SearchWordOnOnlineDictionary(wordDto.word);
-                    return InsertNew(word);
+                    return InsertNew(word.First());
                 }
                 else
                 {
@@ -97,7 +99,21 @@ namespace ServiceLayer.DictionaryService.Concrete
 
         public Word InsertNew(VocabularyDto wordInfo)
         {
-            var word = wordInfo.ProjectToWord();
+            var word = wordInfo.MapToWord();
+            _context.Words.Add(word);
+            _context.SaveChanges();
+            return word;
+        }
+        public async Task<Word> InsertNew(SaveWordDto wordInfo)
+        {
+            var voc = await SearchWordOnOnlineDictionary(wordInfo.Text);
+            var categoriedId = wordInfo.Categories.Where(kvp => !string.IsNullOrWhiteSpace(kvp.Key))
+                              .Select(kvp => int.Parse(kvp.Key)).ToList();
+
+            var word = voc.First().MapToWord();
+            word.CategoryTags = _context.CategoryTags
+                                .Where(c => categoriedId.Contains(c.CategoryTagId))
+                                .ToList();
             _context.Words.Add(word);
             _context.SaveChanges();
             return word;
@@ -112,6 +128,19 @@ namespace ServiceLayer.DictionaryService.Concrete
             return word;
         }
 
-
+        public Word ChangeCategories(SaveWordDto wordInfo)
+        {
+            if (wordInfo.WordId == null) throw new ArgumentNullException();
+            var categoriedId = wordInfo.Categories.Where(kvp => !string.IsNullOrWhiteSpace(kvp.Key))
+                  .Select(kvp => int.Parse(kvp.Key)).ToList();
+            var word = _context.Words.Include(w=>w.CategoryTags).First(w => w.WordId == wordInfo.WordId);
+            _context.Entry(word).State = EntityState.Unchanged;
+            word.CategoryTags.Clear();
+            word.CategoryTags = _context.CategoryTags
+                                .Where(c => categoriedId.Contains(c.CategoryTagId))
+                                .ToList();
+            _context.SaveChanges();
+            return word;
+        }
     }
 }

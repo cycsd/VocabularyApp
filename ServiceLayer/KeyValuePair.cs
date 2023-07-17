@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ServiceLayer.DictionaryService
+namespace ServiceLayer
 {
-    public class SortFilterOptions
+    public class KeyValuePair
     {
-        public string? SearchText { get; set; }
+        public string Key { get; set; }
+        public string Value { get; set; }
     }
 }

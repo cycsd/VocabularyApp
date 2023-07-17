@@ -18,7 +18,7 @@ builder.Services.AddScoped<ICoreDictionaryService, DictionaryService>();
 builder.Services.AddScoped<TagService>();
 
 var MyLocalCorsPolicy = "LocalCors";
-var Local = "http://127.0.0.1:3000";
+var Local = new string[] { "http://127.0.0.1:3000", "http://localhost:3000" };
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(MyLocalCorsPolicy,

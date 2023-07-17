@@ -8,6 +8,7 @@ namespace ServiceLayer.DictionaryService
 {
     public class SimpleWordInfoDto
     {
+        public IEnumerable<KeyValuePair> Categories { get; set; }
         public int WordId { get; set; }
         public string Text { get; set; }
         public IEnumerable<DefinitionInfoDto> PartOfSpeech { get; set; }

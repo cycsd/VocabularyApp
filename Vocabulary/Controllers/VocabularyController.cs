@@ -36,7 +36,7 @@ namespace Vocabulary.Controllers
             {
                 if (wordDto.wordId == null && !string.IsNullOrWhiteSpace(wordDto.word))
                 {
-                    wordDto = await _dictionaryService.SearchWordOnOnlineDictionary(wordDto.word);
+                    wordDto = (await _dictionaryService.SearchWordOnOnlineDictionary(wordDto.word)).First();
                     var resp = _dictionaryService.InsertNew(wordDto);
                     return Ok(new VocabularyDto { word = resp.Text, wordId = resp.WordId });
                 }
